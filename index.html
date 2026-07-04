@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Universe Hub</title>
+    <style>
+        :root {
+            --bg-dark: #0f0f12;
+            --card-bg: #1a1a24;
+            --accent-orange: #ff6b35;
+            --accent-green: #2ec4b6;
+            --accent-red: #e63946;
+            --text-light: #f4f4f9;
+            --text-muted: #a0a0b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark );
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200') no-repeat center/cover;
+            padding: 5rem 2rem;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-orange);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,107,53,0.5);
+        }
+
+        header p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        nav {
+            background-color: #111116;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        nav a.naruto-nav:hover { background-color: var(--accent-orange); }
+        nav a.ds-nav:hover { background-color: var(--accent-green); }
+        nav a.aot-nav:hover { background-color: var(--accent-red); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        .anime-section {
+            margin-bottom: 6rem;
+            scroll-margin-top: 80px;
+        }
+
+        .anime-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .naruto-theme { color: var(--accent-orange); border-left: 5px solid var(--accent-orange); padding-left: 1rem; }
+        .ds-theme { color: var(--accent-green); border-left: 5px solid var(--accent-green); padding-left: 1rem; }
+        .aot-theme { color: var(--accent-red); border-left: 5px solid var(--accent-red); padding-left: 1rem; }
+
+        .anime-desc {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 900px;
+        }
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .character-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .character-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .char-images {
+            display: flex;
+            height: 240px;
+            background-color: #222;
+        }
+
+        .img-box {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .img-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            z-index: 1;
+        }
+
+        .img-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0,0,0,0.7);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .label-cute { color: #03ff64; border: 1px solid #3a03ff; }
+        .label-arrogant { color: #d11091; border: 1px solid #e63946; }
+
+        .char-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .char-name {
+            font-size: 1.6rem;
+            margin-bottom: 0.6rem;
+            color: #4c0be650;
+        }
+
+        .char-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-style: italic and bold ;
+        }
+
+        .char-story {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            color: #000000;
+            flex-grow: 12;
+        }
+
+        .power-box {
+            background-color: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border-top: 4px solid transparent;
+        }
+
+        .naruto-card .power-box { border-color: var(--accent-orange); }
+        .ds-card .power-box { border-color: var(--accent-green); }
+        .aot-card .power-box { border-color: var(--accent-red); }
+
+        .power-title {
+            font-weight: bold  ;
+            text-transform: lowercase;
+            font-size: 0.57rem;
+            letter-spacing: 3px;
+            margin-bottom: 0.25rem;
+        }
+
+        footer {
+            background-color: #0b0b0d;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid #222;
+        }
+
+        @media (max-width: 768px) {
+            .character-grid {
+                grid-template-columns: 1fr;
+            }
+            nav {
+                gap: 0.5rem;
+            }
+            nav a {
+                font-size: 0.8rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Legends of Anime</h1>
+        <p>Explore the journeys, duality of personality, and definitive powers shaping the worlds of Naruto, Demon Slayer, and Attack on Titan.</p>
+    </header>
+
+    <nav>
+        <a href="#naruto" class="naruto-nav">Naruto</a>
+        <a href="#demon-slayer" class="ds-nav">Demon Slayer</a>
+        <a href="#attack-on-titan" class="aot-nav">Attack on Titan</a>
+    </nav>
+
+    <div class="container">
+
+        <!-- ==================== NARUTO SECTION ==================== -->
+        <section id="naruto" class="anime-section">
+            <h2 class="anime-title naruto-theme">Naruto</h2>
+            <p class="anime-desc">The epic tale of ninjas striving for peace, recognition, and breaking the vicious cycles of hatred through sheer willpower and tactical skill.</p>
+            
+            <div class="character-grid">
+                <!-- Character 1 -->
+                <div class="character-card naruto-card">
+                    <div class="char-images">
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=400')">
+                            <span class="img-label label-cute">Cute/Goofy</span>
+                        </div>
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?q=80&w=400')">
+                            <span class="img-label label-arrogant">Serious/Badass</span>
+                        </div>
+                    </div>
+                    <div class="char-info">
+                        <h3 class="char-name">Naruto Uzumaki</h3>
+                        <div class="char-meta">Role: Main Protagonist</div>
+                        <p class="char-story"><strong>Early Life:</strong> Ostracized by his entire village from infancy due to hosting the Nine-Tailed Fox monster inside him, Naruto grew up completely lonely. He pulled constant pranks just to be noticed, hiding deep pain behind an energetic, clumsy smile.<br><br><strong>Personality Duality:</strong> He is naturally a warm-hearted, Ramen-obsessed goofball who acts cute and naive. However, when his friends are threatened, his posture shifts into intense, unyielding combat seriousness.</p>
+                        <div class="power-box">
+                            <div class="power-title" style="color: var(--accent-orange);">Special Power</div>
+                            <p><strong>Sage Mode & Shadow Clones:</strong> Can manifest hundreds of tangible clones and tap into natural energy to cast massive Rasengan energy spheres.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Character 2 -->
+                <div class="character-card naruto-card">
+                    <div class="char-images">
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1541562232579-512a21360020?q=80&w=400')">
+                            <span class="img-label label-cute">Soft/Tragic</span>
+                        </div>
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400')">
+                            <span class="img-label label-arrogant">Arrogant Elite</span>
+                        </div>
+                    </div>
+                    <div class="char-info">
+                        <h3 class="char-name">Sasuke Uchiha</h3>
+                        <div class="char-meta">Role: Rival / Deuteragonist</div>
+                        <p class="char-story"><strong>Early Life:</strong> Born a prodigy into the elite Uchiha clan, his peaceful childhood was completely shattered overnight when his older brother wiped out their entire family. This left Sasuke as a deeply traumatized avenger.<br><br><strong>Personality Duality:</strong> While secretly harboring soft protective instincts for Team 7, his default demeanor is cold, detached, and fiercely arrogant, seeing others as obstacles to his vengeance.</p>
+                        <div class="power-box">
+                            <div class="power-title" style="color: var(--accent-orange);">Special Power</div>
+                            <p><strong>Sharingan & Chidori:</strong> Visual prowess that predicts enemy movements, casts illusions, and channels high-voltage lightning tracking strikes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Character 3 -->
+                <div class="character-card naruto-card">
+                    <div class="char-images">
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=400')">
+                            <span class="img-label label-cute">Playful Reader</span>
+                        </div>
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=400')">
+                            <span class="img-label label-arrogant">Cold Executioner</span>
+                        </div>
+                    </div>
+                    <div class="char-info">
+                        <h3 class="char-name">Kakashi Hatake</h3>
+                        <div class="char-meta">Role: Mentor / Team Leader</div>
+                        <p class="char-story"><strong>Early Life:</strong> Growing up during war, his father's tragic suicide forced Kakashi to follow strict, emotionless rules. After losing his teammates in battle, he realized camaraderie mattered more than regulations.<br><br><strong>Personality Duality:</strong> He usually wanders around lazily reading romance novels with a cute, relaxed squinted eye. Yet, on the battlefield, his gaze turns razor-sharp and terrifyingly calculating.</p>
+                        <div class="power-box">
+                            <div class="power-title" style="color: var(--accent-orange);">Special Power</div>
+                            <p><strong>Kamui & Copy Ninja:</strong> Can copy over 1,000 alien techniques and generate a localized spatial warp to rip targets directly into another dimension.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== DEMON SLAYER SECTION ==================== -->
+        <section id="demon-slayer" class="anime-section">
+            <h2 class="anime-title ds-theme">Demon Slayer</h2>
+            <p class="anime-desc">Set in Taisho-era Japan, a heartbreaking journey of human swordsmen fighting flesh-eating demons using breathing techniques powered entirely by human lung capacity.</p>
+            
+            <div class="character-grid">
+                <!-- Character 1 -->
+                <div class="character-card ds-card">
+                    <div class="char-images">
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400')">
+                            <span class="img-label label-cute">Kind Brother</span>
+                        </div>
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1618336753974-aae8e04506aa?q=80&w=400')">
+                            <span class="img-label label-arrogant">Relentless Fighter</span>
+                        </div>
+                    </div>
+                    <div class="char-info">
+                        <h3 class="char-name">Tanjiro Kamado</h3>
+                        <div class="char-meta">Role: Main Protagonist</div>
+                        <p class="char-story"><strong>Early Life:</strong> A simple, kind-hearted coal seller living on a peaceful mountain. His world dissolved when a demon slaughtered his entire family, leaving only his sister Nezuko alive but transformed into a monster.<br><br><strong>Personality Duality:</strong> Tanjiro is incredibly gentle, polite, and holds an empathetic heart that even pities dying demons. When forced to protect people, his resolve hardens into absolute, unyielding fury.</p>
+                        <div class="power-box">
+                            <div class="power-title" style="color: var(--accent-green);">Special Power</div>
+                            <p><strong>Sun Breathing & Enhanced Smell:</strong> A legendary primordial sword style generating intense, blinding solar flames that stop demon regeneration entirely.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Character 2 -->
+                <div class="character-card ds-card">
+                    <div class="char-images">
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1580477667995-2b94f01c9516?q=80&w=400')">
+                            <span class="img-label label-cute">Box Dweller</span>
+                        </div>
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400')">
+                            <span class="img-label label-arrogant">Demon Awakened</span>
+                        </div>
+                    </div>
+                    <div class="char-info">
+                        <h3 class="char-name">Nezuko Kamado</h3>
+                        <div class="char-meta">Role: Transformed Sister</div>
+                        <p class="char-story"><strong>Early Life:</strong> The eldest daughter of the Kamado family, she was a deeply responsible, caring girl who routinely sacrificed her own comforts to help support her poor mother and younger siblings.<br><br><strong>Personality Duality:</strong> Due to wearing a bamboo muzzle, she behaves like a cute, silent child who shrinks in size to hide in a box. In active combat, she transforms into an aggressive, towering demon powerhouse.</p>
+                        <div class="power-box">
+                            <div class="power-title" style="color: var(--accent-green);">Special Power</div>
+                            <p><strong>Exploding Blood Arts:</strong> Can instantly ignite her own shed blood into pink, scorching supernatural flames that incinerate demon tissue.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Character 3 -->
+                <div class="character-card ds-card">
+                    <div class="char-images">
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=400')">
+                            <span class="img-label label-cute">Boar Comedian</span>
+                        </div>
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=400')">
+                            <span class="img-label label-arrogant">Boastful Alpha</span>
+                        </div>
+                    </div>
+                    <div class="char-info">
+                        <h3 class="char-name">Inosuke Hashibira</h3>
+                        <div class="char-meta">Role: Combat Companion</div>
+                        <p class="char-story"><strong>Early Life:</strong> Abandoned as an infant, Inosuke was adopted and raised entirely by wild boars in the rugged mountains. He learned how to survive based completely on pure animal instinct.<br><br><strong>Personality Duality:</strong> Underneath his terrifying wild boar hide mask lies a surprisingly pretty, feminine face. He can be childishly clueless about basic human kindness, but masking it with an arrogant, screaming alpha ego.</p>
+                        <div class="power-box">
+                            <div class="power-title" style="color: var(--accent-green);">Special Power</div>
+                            <p><strong>Beast Breathing & Flexibility:</strong> Self-taught dual-serrated swordsmanship paired with highly irregular spatial awareness and the ability to shift his organs at will.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== ATTACK ON TITAN SECTION ==================== -->
+        <section id="attack-on-titan" class="anime-section">
+            <h2 class="anime-title aot-theme">Attack on Titan</h2>
+            <p class="anime-desc">A dark, complex political thriller focused on a cornered humanity living inside massive walls to shield themselves from mindless, human-eating giant Titans.</p>
+            
+            <div class="character-grid">
+                <!-- Character 1 -->
+                <div class="character-card aot-card">
+                    <div class="char-images">
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=400')">
+                            <span class="img-label label-cute">Naïve Dreamer</span>
+                        </div>
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1613376023733-0a73315d9b06?q=80&w=400')">
+                            <span class="img-label label-arrogant">Ruthless Tyrant</span>
+                        </div>
+                    </div>
+                    <div class="char-info">
+                        <h3 class="char-name">Eren Jaeger</h3>
+                        <div class="char-meta">Role: Tragic Protagonist</div>
+                        <p class="char-story"><strong>Early Life:</strong> Born trapped inside protective walls, Eren fiercely desired to see the outside world. His life broke when a giant Titan kicked through his hometown gate, brutally devouring his mother before his eyes.<br><br><strong>Personality Duality:</strong> He started as an intensely passionate, emotional kid who cared deeply for his friends' safety. Over time, he hardened into a cold, completely unyielding force willing to destroy the globe for freedom.</p>
+                        <div class="power-box">
+                            <div class="power-title" style="color: var(--accent-red);">Special Power</div>
+                            <p><strong>The Founding & Attack Titan:</strong> Can transform into a massive, muscular Titan with unmatched hand-to-hand power, harden skin, and command millions of colossal monsters.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Character 2 -->
+                <div class="character-card aot-card">
+                    <div class="char-images">
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=400')">
+                            <span class="img-label label-cute">Scarf-Wearing Protector</span>
+                        </div>
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?q=80&w=400')">
+                            <span class="img-label label-arrogant">Grim Reaper</span>
+                        </div>
+                    </div>
+                    <div class="char-info">
+                        <h3 class="char-name">Mikasa Ackerman</h3>
+                        <div class="char-meta">Role: Elite Guardian</div>
+                        <p class="char-story"><strong>Early Life:</strong> After human traffickers murdered her parents, she was saved by Eren, who gave her his red scarf and a reason to fight. She was subsequently adopted by the Jaeger family as a sibling.<br><br><strong>Personality Duality:</strong> Around Eren, she is incredibly protective, soft-spoken, and wears a gentle, quiet expression. On the battlefield, she assumes a completely cold, arrogant detachment, neutralizing squads without blinking.</p>
+                        <div class="power-box">
+                            <div class="power-title" style="color: var(--accent-red);">Special Power</div>
+                            <p><strong>Ackerman Bloodline Awakening:</strong> Genetic modification giving her immediate access to generations of combat experience, extreme speed, and immense physical strength.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Character 3 -->
+                <div class="character-card aot-card">
+                    <div class="char-images">
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=400')">
+                            <span class="img-label label-cute">Timid Thinker</span>
+                        </div>
+                        <div class="img-box" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400')">
+                            <span class="img-label label-arrogant">Master Strategist</span>
+                        </div>
+                    </div>
+                    <div class="char-info">
+                        <h3 class="char-name">Armin Arlert</h3>
+                        <div class="char-meta">Role: Tactician / Commander</div>
+                        <p class="char-story"><strong>Early Life:</strong> Physically weak and constantly targeted by neighborhood bullies, Armin grew up relying entirely on books. He was the one who originally planted the dream of exploring forbidden oceans inside Eren's head.<br><br><strong>Personality Duality:</strong> He often looks timid, insecure, and anxious about his own physical shortcomings. However, when stakes are desperate, he formulates dark, terrifyingly efficient strategies to trap enemies.</p>
+                        <div class="power-box">
+                            <div class="power-title" style="color: var(--accent-red);">Special Power</div>
+                            <p><strong>Colossal Titan Intellect:</strong> Shifts into a towering 60-meter giant that releases massive nuclear-scale heat blasts while retaining his brilliant strategic mind.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Anime Universe Hub. Designed for Anime Fans.</p>
+    </footer>
+<form>
+  <!-- For numbers-only serials -->
+  <label for="serialNum">Serial Number:</label>
+  <input type="number" id="serialNum" name="serial_number" required>
+  
+  <!-- For alphanumeric serials (e.g., SN-A123) -->
+  <label for="serialAlpha">Alphanumeric Serial:</label>
+  <input type="text" id="serialAlpha" name="serial_alpha" pattern="[A-Za-z0-9-]+" placeholder="e.g., SN-1234">
+
+  <button type="submit">Submit</button>
+</form>
+<img src="old-image.jpg" alt="Old Description">
+Here is the complete, single-file HTML code for your anime website. It combines modern UI layouts with interactive JavaScript features, including a dynamic Watchlist Tracker, a Random Anime Generator, a Release Countdown Schedule, and a Community Character Poll.
+Save this code into a file named index.html and open it in any web browser.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OtakuHub - Ultimate Anime Portal</title>
+    <style>
+        /* Base Styling & Theme Colors */
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #1f2833;
+            --accent-color: #66fcf1;
+            --text-color: #c5c6c7;
+            --text-bright: #ffffff;
+            --button-hover: #45a29e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #151a21;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--text-bright);
+            font-size: 2.5rem;
+        }
+
+        header span {
+            color: var(--accent-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        /* Feature Card Layouts */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            color: var(--text-bright);
+            border-left: 4px solid var(--accent-color);
+            padding-left: 10px;
+            margin-top: 0;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+
+        input[type="text"] {
+            background: #0b0c10;
+            border: 1px solid #45a29e;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            width: calc(100% - 24px);
+            margin-bottom: 10px;
+        }
+
+        /* Feature 1: Watchlist Styles */
+        .watchlist-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .watchlist-input input {
+            flex-grow: 1;
+            margin-bottom: 0;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #151a21;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+        }
+
+        /* Feature 2: Generator Styles */
+        .generator-result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #151a21;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+
+        /* Feature 3: Schedule Grid */
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #2c3540;
+        }
+
+        .schedule-item:last-child {
+            border: none;
+        }
+
+        .time-tag {
+            color: var(--accent-color);
+            font-family: monospace;
+        }
+
+        /* Feature 4: Poll Styles */
+        .poll-option {
+            margin: 15px 0;
+        }
+
+        .poll-bar-bg {
+            background: #0b0c10;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .poll-bar-fill {
+            background: var(--accent-color);
+            height: 12px;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Otaku<span>Hub</span></h1>
+        <p>Your interactive dashboard for seasonal discovery and tracking</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- MAIN CONTENT AREA -->
+        <main style="display: flex; flex-direction: column; gap: 30px;">
+            
+            <!-- FEATURE 1: WATCHLIST TRACKER -->
+            <section class="card">
+                <h2>My Personal Watchlist</h2>
+                <p>Track titles you are currently watching or planning to start.</p>
+                <div class="watchlist-input">
+                    <input type="text" id="animeInput" placeholder="Enter anime name (e.g., Attack on Titan)...">
+                    <button onclick="addAnime()">Add</button>
+                </div>
+                <ul id="watchlist">
+                    <li>Demon Slayer <button class="delete-btn" onclick="this.parentElement.remove()">Remove</button></li>
+                    <li>Jujutsu Kaisen <button class="delete-btn" onclick="this.parentElement.remove()">Remove</button></li>
+                </ul>
+            </section>
+
+            <!-- FEATURE 2: RANDOM ANIME GENERATOR -->
+            <section class="card">
+                <h2>Gacha Recommendation Engine</h2>
+                <p>Can't decide what to watch next? Let fate choose a highly rated masterpiece for you.</p>
+                <button onclick="generateRandomAnime()">Roll a Random Anime</button>
+                <div class="generator-result" id="gachaResult">Click the button to roll!</div>
+            </section>
+
+        </main>
+
+        <!-- SIDEBAR AREA -->
+        <aside style="display: flex; flex-direction: column; gap: 30px;">
+            
+            <!-- FEATURE 3: DYNAMIC RELEASE CALENDAR -->
+            <section class="card">
+                <h2>Today's Release Schedule</h2>
+                <div class="schedule-item">
+                    <span>Chainsaw Man Season 2</span>
+                    <span class="time-tag">Airing Next</span>
+                </div>
+                <div class="schedule-item">
+                    <span>One Piece</span>
+                    <span class="time-tag">Aired 2h ago</span>
+                </div>
+                <div class="schedule-item">
+                    <span>Kaiju No. 8</span>
+                    <span class="time-tag">In 5 hours</span>
+                </div>
+            </section>
+
+            <!-- FEATURE 4: CHARACTER VOTING POLL -->
+            <section class="card">
+                <h2>Character Face-Off Poll</h2>
+                <p>Who is your favorite protagonist this season?</p>
+                
+                <div class="poll-option">
+                    <button onclick="vote('vote1')">Vote for Luffy</button>
+                    <div class="poll-bar-bg"><div id="vote1" class="poll-bar-fill"></div></div>
+                </div>
+
+                <div class="poll-option">
+                    <button onclick="vote('vote2')">Vote for Naruto</button>
+                    <div class="poll-bar-bg"><div id="vote2" class="poll-bar-fill"></div></div>
+                </div>
+            </section>
+
+        </aside>
+
+    </div>
+
+    <!-- SCRIPT LOGIC FOR INTERACTIVE FEATURES -->
+    <script>
+        // Watchlist Functionality
+        function addAnime() {
+            const input = document.getElementById('animeInput');
+            const animeName = input.value.trim();
+            
+            if (animeName === "") {
+                alert("Please enter a valid title!");
+                return;
+            }
+
+            const ul = document.getElementById('watchlist');
+            const li = document.createElement('li');
+            li.textContent = animeName;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Remove';
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.onclick = function() {
+                this.parentElement.remove();
+            };
+
+            li.appendChild(deleteBtn);
+            ul.appendChild(li);
+            input.value = "";
+        }
+
+        // Random Anime Pool Functionality
+        const animeDatabase = [
+            "Fullmetal Alchemist: Brotherhood",
+            "Steins;Gate",
+            "Hunter x Hunter (2011)",
+            "Bleach: Thousand-Year Blood War",
+            "Cyberpunk: Edgerunners",
+            "Frieren: Beyond Journey's End",
+            "Neon Genesis Evangelion",
+            "Death Note",
+            "Mob Psycho 100"
+        ];
+
+        function generateRandomAnime() {
+            const resultDiv = document.getElementById('gachaResult');
+            resultDiv.style.color = "#ffffff";
+            resultDiv.textContent = "Searching records...";
+            
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * animeDatabase.length);
+                resultDiv.textContent = "🎯 Try Watching: " + animeDatabase[randomIndex];
+                resultDiv.style.color = "var(--accent-color)";
+            }, 400);
+        }
+
+        // Dummy Live Poll Voting System
+        let voteCounts = { vote1: 14, vote2: 9 };
+        
+        function updatePollVisuals() {
+            const total = voteCounts.vote1 + voteCounts.vote2;
+            const pct1 = ((voteCounts.vote1 / total) * 100).toFixed(0);
+            const pct2 = ((voteCounts.vote2 / total) * 100).toFixed(0);
+            
+            document.getElementById('vote1').style.width = pct1 + "%";
+
+document.getElementById('vote2').style.width = pct2 + "%";
+}
+function vote(optionId) {
+voteCounts[optionId] += 1;
+updatePollVisuals();
+}
+// Run poll on load
+window.onload = function() {
+updatePollVisuals();
+};
+
+
+
+
+
+
+<!-- Locate this in your HTML: -->
+<header>
+    <h1>Hinata<span>Hub</span></h1>
+    <p>Your interactive dashboard for seasonal discovery and tracking</p>
+</header>
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+</body>
+</html>
